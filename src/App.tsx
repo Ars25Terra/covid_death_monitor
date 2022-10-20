@@ -1,26 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {observer} from "mobx-react-lite";
+import {useRootStore} from "./app/stores/StoreProvider";
+import LoginForm from "./app/components/LoginForm/LoginForm";
+import UserArea from "./app/components/UserArea/UserArea";
+import {createTheme, ThemeProvider} from "@mui/material";
+import './app/styles/style.css'
+import ErrorMessage from "./app/components/ErrorMessage/ErrorMessage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+const App = observer(() => {
+    const store = useRootStore()
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark'
+        },
+    });
+
+    return <ThemeProvider theme={darkTheme}>
+    <div className="app">
+        {!store.accessToken && !store.errorText && <LoginForm store={store}/>}
+        {store.accessToken && !store.errorText && <UserArea store={store}/>}
+        {store.errorText && <ErrorMessage errorText={store.errorText}/>}
     </div>
-  );
-}
+    </ThemeProvider>
+    }
 
+)
 export default App;
